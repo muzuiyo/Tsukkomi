@@ -79,9 +79,7 @@ const UserPage = () => {
         const data = await getHeatmapData({ username });
         setHeatmapData(data);
         const labelsData = await getUserLabels(username);
-        console.log(labelsData);
         setLabelsList(labelsData);
-        console.log(data);
       } catch (err: unknown) {
         if(err instanceof Error) {
           console.error(err);
