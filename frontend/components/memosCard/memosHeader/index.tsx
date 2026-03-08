@@ -13,7 +13,7 @@ const MemosHeader = ({ createdAt, isPublic }: Props) => {
         {localTime}
       </span>
       <span className={`memos-status ${isPublic ? "public" : "private"}`}>
-        {isPublic ? "🌏︎ 公开" : "🔒︎ 私密"}
+        {isPublic ? "公开" : "私密"}
       </span>
     </div>
   );
