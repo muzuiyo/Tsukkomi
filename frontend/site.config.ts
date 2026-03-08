@@ -7,7 +7,7 @@ const siteConfig = {
     // 控制每次获取数目：API 限制最大 20
     pageSize: 20,
     // 用于控制是否显示注册 UI
-    allowRegister: true,
+    allowRegister: false,
 }
 
 export default siteConfig;

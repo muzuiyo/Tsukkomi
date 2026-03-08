@@ -44,10 +44,10 @@ app.use(
 );
 
 // 速率限制
-app.use("*", rateLimit());
-app.use("/auth/login", rateLimit({ max: 10 }));
-app.use("/auth/register", rateLimit({ max: 10 }));
-app.use("/auth/password/*", rateLimit({ max: 10 }));
+// app.use("*", rateLimit());
+// app.use("/auth/login", rateLimit({ max: 10 }));
+// app.use("/auth/register", rateLimit({ max: 10 }));
+// app.use("/auth/password/*", rateLimit({ max: 10 }));
 
 // ==============================
 // 运行检查

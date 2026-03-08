@@ -8,7 +8,7 @@
 	// ],
 	"vars": {
 		// 用于控制是否启用注册账号的 API
-		"ALLOW_REGISTER": true,
+		"ALLOW_REGISTER": false,
 		// 是否生产环境
 		"IS_PRODUCTION": true,
 		// 每分钟速率限制
