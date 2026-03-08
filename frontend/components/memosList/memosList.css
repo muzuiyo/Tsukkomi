@@ -1,0 +1,40 @@
+.memolist-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.memoslist-more-loading {
+    font-size: 0.9rem;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+}
+
+.memoslist-load-more {
+  display: flex;              /* 使用 flex 布局 */
+  align-items: center;        /* 垂直居中 */
+  justify-content: center;    /* 水平居中 */
+  width: 100%;                /* 根据需要可以撑满容器，也可以固定宽度 */
+  padding: 10px 16px;         /* 上下左右内边距，保证文字不会贴边 */
+  background-color: var(--card-bg); /* 按钮背景，可自定义 */
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.memoslist-load-more:hover {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.memoslist-load-more:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

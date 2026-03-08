@@ -1,0 +1,43 @@
+/* ============================= */
+/* 全局悬浮返回顶部 */
+/* ============================= */
+
+.scroll-to-top-global {
+  position: fixed;
+  right: 100px;
+  bottom: 80px;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  border: none;
+  cursor: pointer;
+
+  background: var(--button-bg);
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+  z-index: 9999;
+
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.scroll-to-top-global:hover {
+  background: var(--button-hover);
+  transform: translateY(-4px);
+}
+
+@media (max-width: 880px) {
+  .scroll-to-top-global {
+    right: 20px;
+    bottom: 30px;
+  }
+}

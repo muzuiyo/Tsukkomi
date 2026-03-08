@@ -1,0 +1,48 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "tsukkomi",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-02-26",
+	// "compatibility_flags": [
+	//   "nodejs_compat"
+	// ],
+	"vars": {
+		// 用于控制是否启用注册账号的 API
+		"ALLOW_REGISTER": true,
+		// 是否生产环境
+		"IS_PRODUCTION": true,
+		// 每分钟速率限制
+		"RATE_LIMIT_MAX": 200,
+		// 前端地址
+		"FRONT_URL": "https://tsukkomi.lain.today"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "MEMO_KV",
+			// KV id
+			"id": "9462f4b8884d405cb3511c9911f1dffc",
+		},
+	],
+	// "r2_buckets": [
+	//   {
+	//     "binding": "MY_BUCKET",
+	//     "bucket_name": "my-bucket"
+	//   }
+	// ],
+	"d1_databases": [
+		{
+			"binding": "MEMO_DB",
+			// D1 数据库 name
+			"database_name": "memo-db",
+			// D1 数据库 id
+			"database_id": "3cb9b013-e749-4093-976f-2a8ac3db5023"
+		}
+	],
+	// "ai": {
+	//   "binding": "AI"
+	// },
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	}
+}

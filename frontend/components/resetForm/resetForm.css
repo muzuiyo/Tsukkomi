@@ -1,0 +1,57 @@
+/* ===== 表单容器 ===== */
+.reset-form-container {
+  width: 100%;
+}
+
+/* ===== 表单 ===== */
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ===== 输入框 ===== */
+.reset-form input {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.reset-form input:focus {
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 2px rgba(74, 124, 255, 0.2);
+}
+
+/* ===== 错误提示 ===== */
+.reset-error {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  margin-top: -6px;
+}
+
+/* ===== 按钮 ===== */
+.reset-form button[type="submit"] {
+  height: 44px;
+  border: none;
+  border-radius: 4px;
+  background: var(--button-bg);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-form button[type="submit"]:hover {
+  background: var(--button-hover);
+}
+
+.reset-form button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

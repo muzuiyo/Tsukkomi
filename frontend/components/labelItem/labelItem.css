@@ -1,0 +1,21 @@
+.label-item-container {
+    background: var(--input-bg);
+    color: var(--text-secondary);
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+.label-item-meta {
+    margin: 6px 6px;
+}
+
+.label-item-container:hover {
+    border-color: var(--button-bg);
+    background: var(--bg-primary);
+    cursor: pointer;
+}

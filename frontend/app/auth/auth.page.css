@@ -1,0 +1,78 @@
+/* ===== 页面居中 ===== */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-primary);
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+/* ===== 卡片 ===== */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card-bg);
+  padding: 40px 32px;
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+/* ===== 头部（Logo + 模式） ===== */
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.auth-logo {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.auth-mode {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ===== 切换文字 ===== */
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.auth-switch span {
+  color: var(--button-bg);
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.auth-switch span:hover {
+  text-decoration: underline;
+}
+
+/* ===== 移动端优化 ===== */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+
+  .auth-logo {
+    font-size: 18px;
+  }
+
+  .auth-mode {
+    font-size: 13px;
+  }
+
+  .forgot-link {
+    color: #aaa;
+  }
+}
