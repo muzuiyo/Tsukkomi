@@ -1,5 +1,5 @@
 const siteConfig = {
-    baseUrl: process.env.NODE_ENV ? "http://localhost:3000" : "https://tsukkomi.lain.today",
+    baseUrl: "https://tsukkomi.lain.today",
     siteInfo: {
         title: "Tsukkomi 备忘录",
         subTitle: "吐槽、笔记，和想象有关的"
