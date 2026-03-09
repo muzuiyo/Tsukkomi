@@ -124,6 +124,7 @@ const MemosList = forwardRef<MemosListRef, MemosListProps>(({ query }, ref) => {
           memos={memo}
           canEdit={currentUser?.id === memo.userId}
           onDelete={onDelete}
+          keyword={query.keyword || ""}
         />
       ))}
 

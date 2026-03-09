@@ -10,15 +10,19 @@ import { useEffect, useRef, useState } from "react";
 import { updateMemos } from "@/lib/api/memos";
 import { useToast } from "@/contexts/toastContext";
 import rehypeSanitize from "rehype-sanitize";
+import { visit } from "unist-util-visit";
+import { Root, Element, Text, Parent } from 'hast'; 
 
 interface Props {
   memos: Memos;
   canEdit: boolean;
   onDelete: (id: string) => Promise<void>;
+  keyword: string;
 }
 
 const MAX_HEIGHT = 100;
 
+const MemosCard = ({ memos, canEdit, onDelete, keyword }: Props) => {
   const [memosData, setMemosData] = useState(memos);
   const [isEditing, setIsEditing] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -39,6 +43,48 @@ const MAX_HEIGHT = 100;
   const handleOnEdit = () => {
     setIsEditing(true);
   };
+
+  function escapeRegExp(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function rehypeHighlight(keyword: string) {
+    return (tree: Root) => {
+      if(!keyword) return;
+      const regex = new RegExp(`(${escapeRegExp(keyword)})`, "gi");
+
+      visit(tree, "text", (node: Text, index: number | undefined, parent: Parent | undefined) => {
+        if(!parent || typeof index !== "number") return;
+        if(
+          parent && "tagName" in parent && typeof parent.tagName === "string"
+          && ["mark", "code", "pre", "a", "script", "style"].includes(parent.tagName)
+        ) {
+          return;
+        }
+
+        const value = node.value;
+        if (!value.toLowerCase().includes(keyword.toLowerCase())) return;
+
+        const parts = value.split(regex);
+
+        const newNodes: (Text | Element)[] = parts.map((part) => {
+          if(part.toLowerCase() === keyword.toLowerCase()) {
+            return {
+              type: "element",
+              tagName: "mark",
+              properties: { className: ["memo-highlight"] },
+              children: [{ type: "text", value: part }],
+            };
+          }
+
+          return { type: "text", value: part };
+        });
+
+        parent.children.splice(index, 1, ...newNodes);
+        return "skip";
+      });
+    };
+  }
 
   const handleDownloadImage = async () => {
     if (!cardRef.current) return;
@@ -153,7 +199,7 @@ const MAX_HEIGHT = 100;
         <div ref={contentRef} className={wrapperClass}>
           <MDEditor.Markdown
             source={memosData.content}
-            rehypePlugins={[rehypeSanitize]}
+            rehypePlugins={[rehypeSanitize, [rehypeHighlight, keyword]]}
             style={{ background: "var(--card-bg)" }}
           />
         </div>
