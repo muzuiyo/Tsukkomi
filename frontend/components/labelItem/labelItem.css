@@ -8,6 +8,7 @@
     flex-direction: row;
     align-items: center;
     border: 1px solid var(--border-color);
+    height: 2rem;
 }
 
 .label-item-meta {
@@ -18,5 +19,4 @@
     border-color: var(--button-bg);
     background: var(--bg-primary);
     cursor: pointer;
-    height: 2rem;
 }
