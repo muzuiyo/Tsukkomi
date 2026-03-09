@@ -120,6 +120,7 @@ const SingleMemoPage = () => {
             memos={memo}
             canEdit={currentUser?.id === memo.userId}
             onDelete={() => handleDelete(memo.id)}
+            keyword={query.keyword || ""}
           />
         ) : (
           <div className="not-found">
