@@ -113,6 +113,10 @@ a {
     gap: 14px;
 }
 
+.memo-highlight {
+  background-color: #5b8cff5a !important;
+}
+
 @media (max-width: 1100px) {
     .main-container {
       padding: 10px 15px;
