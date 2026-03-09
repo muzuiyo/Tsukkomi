@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./memosEditCard.css";
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { useToast } from "@/contexts/toastContext";
+import rehypeSanitize from "rehype-sanitize";
 
 interface EditableMemosCardProps {
   memo: {
@@ -32,6 +33,9 @@ const MemosEditCard = ({ memo, onSave, onCancel }: EditableMemosCardProps) => {
       <div className="memos-edit-card-textarea" style={{ padding: "5px" }}>
         <MDEditor
           value={content}
+          previewOptions={{
+            rehypePlugins: [[rehypeSanitize]],
+          }}
           onChange={(val) => val !== undefined && setContent(val)}
           preview="edit"
           extraCommands={[commands.codeEdit, commands.codePreview]}

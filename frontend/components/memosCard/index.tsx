@@ -9,6 +9,7 @@ import { toPng } from "html-to-image";
 import { useEffect, useRef, useState } from "react";
 import { updateMemos } from "@/lib/api/memos";
 import { useToast } from "@/contexts/toastContext";
+import rehypeSanitize from "rehype-sanitize";
 
 interface Props {
   memos: Memos;
@@ -18,7 +19,6 @@ interface Props {
 
 const MAX_HEIGHT = 100;
 
-const MemosCard = ({ memos, canEdit, onDelete }: Props) => {
   const [memosData, setMemosData] = useState(memos);
   const [isEditing, setIsEditing] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -153,6 +153,7 @@ const MemosCard = ({ memos, canEdit, onDelete }: Props) => {
         <div ref={contentRef} className={wrapperClass}>
           <MDEditor.Markdown
             source={memosData.content}
+            rehypePlugins={[rehypeSanitize]}
             style={{ background: "var(--card-bg)" }}
           />
         </div>
