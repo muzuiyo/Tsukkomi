@@ -39,8 +39,8 @@ const MemosEditCard = ({ memo, onSave, onCancel }: EditableMemosCardProps) => {
           onChange={(val) => val !== undefined && setContent(val)}
           preview="edit"
           extraCommands={[commands.codeEdit, commands.codePreview]}
-          height="100%"
-          visibleDragbar={false}
+          height={onCancel ? undefined : 140}
+          visibleDragbar={true}
           textareaProps={{
             placeholder: "现在在做什么？"
           }}
