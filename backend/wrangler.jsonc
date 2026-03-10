@@ -13,6 +13,8 @@
 		"IS_PRODUCTION": true,
 		// 每分钟速率限制
 		"RATE_LIMIT_MAX": 200,
+		// RESEND 服务使用的邮箱
+		"NOREPLY_EMAIL": "noreply@lain.today",
 		// 前端地址
 		"FRONT_URL": "https://tsukkomi.lain.today"
 	},

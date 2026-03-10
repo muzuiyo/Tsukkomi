@@ -35,7 +35,7 @@ passwordApp.post("/password/forget", async (c) => {
   // 使用第三方 RESEND API 发送邮件 
   const resend = new Resend(c.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: "noreplay@lain.today",
+    from: c.env.NOREPLY_EMAIL,
     to: email,
     subject: "TSUKKOMI | Reset your password",
     html: `

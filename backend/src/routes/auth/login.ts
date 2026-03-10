@@ -65,6 +65,7 @@ loginApp.post("/login", async (c) => {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: isProd ? "None" : "Lax",
     secure: isProd,
+    ...(isProd ? { domain: ".lain.today" } : {})
   });
 
   const publicUser: PublicUser = {

@@ -8,4 +8,5 @@ export interface Env {
   RATE_LIMIT_MAX: number;
   FRONT_URL: string;
   RESEND_API_KEY: string;
+  NOREPLY_EMAIL: string;
 }
