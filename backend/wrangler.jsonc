@@ -18,13 +18,13 @@
 		// 前端地址
 		"FRONT_URL": "https://tsukkomi.lain.today"
 	},
-	"kv_namespaces": [
-		{
-			"binding": "MEMO_KV",
-			// KV id
-			"id": "9462f4b8884d405cb3511c9911f1dffc",
-		},
-	],
+	// "kv_namespaces": [
+	// 	{
+	// 		"binding": "MEMO_KV",
+	// 		// KV id
+	// 		"id": "9462f4b8884d405cb3511c9911f1dffc",
+	// 	},
+	// ],
 	// "r2_buckets": [
 	//   {
 	//     "binding": "MY_BUCKET",

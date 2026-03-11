@@ -8,7 +8,6 @@ import type { AuthUser } from "./types/user";
 import authApp from "./routes/auth";
 import memosApp from "./routes/memos";
 import labelsApp from "./routes/labels";
-import { rateLimit } from "./middleware/rateLimit";
 
 // ==============================
 // Hono 类型扩展
@@ -42,12 +41,6 @@ app.use(
     credentials: true,
   }),
 );
-
-// 速率限制
-// app.use("*", rateLimit());
-// app.use("/auth/login", rateLimit({ max: 10 }));
-// app.use("/auth/register", rateLimit({ max: 10 }));
-// app.use("/auth/password/*", rateLimit({ max: 10 }));
 
 // ==============================
 // 运行检查
