@@ -1,5 +1,5 @@
 const siteConfig = {
-    baseUrl: "https://tsukkomi.lain.today",
+    baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
     siteInfo: {
         title: "Tsukkomi 备忘录",
         subTitle: "吐槽、笔记，和想象有关的"
