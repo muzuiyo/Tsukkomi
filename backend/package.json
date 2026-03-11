@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "tsukkomi",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
