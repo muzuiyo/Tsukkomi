@@ -22,10 +22,10 @@ interface EditableMemosCardProps {
 }
 
 const MemosEditCard = ({ memo, onSave, onCancel }: EditableMemosCardProps) => {
-  const [content, setContent] = useState(memo?.content || "");
-  const [labels, setLabels] = useState(memo?.labels.join(" ") || "");
+  const [content, setContent] = useState(memo?.content ?? "");
+  const [labels, setLabels] = useState(memo?.labels.join(" ") ?? "");
   const [isLoading, setIsLoading] = useState(false);
-  const [isPublic, setIsPublic] = useState<1 | 0>(memo?.isPublic || 1);
+  const [isPublic, setIsPublic] = useState<1 | 0>(memo?.isPublic ?? 1);
   const { showToast } = useToast();
   // 空格分隔标签
   return (
