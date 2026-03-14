@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useToast } from "@/contexts/toastContext";
-import siteConfig from "@/site.config";
 import Link from "next/link";
 import { Memos } from "@/interfaces/memos";
 import { useConfirm } from "@/components/confirm";
@@ -148,7 +147,7 @@ const MemosFooter = ({ memos, canEdit, onScreenshoot, onDelete, onEdit }: Props)
                 className="dropdown-item"
                 onClick={(e) => {
                   e.stopPropagation();
-                  const baseUrl = siteConfig.baseUrl;
+                  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
                   const path = `/memos/${memos.id}`;
                   try {
                     navigator.clipboard.writeText(baseUrl + path);
