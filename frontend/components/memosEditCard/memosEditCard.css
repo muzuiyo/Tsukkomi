@@ -25,7 +25,7 @@
 }
 
 .w-md-editor-text-input {
-  line-height: 1.5rem;
+  line-height: 1.5em !important;
 }
 
 .memos-edit-card-tags-container {
