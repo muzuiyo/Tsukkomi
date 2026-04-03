@@ -24,10 +24,6 @@
   border-radius: 4px;        /* 可选，保持圆角一致 */
 }
 
-.w-md-editor-text-input {
-  line-height: 1.5em !important;
-}
-
 .memos-edit-card-tags-container {
   display: flex;
   font-size: 0.9rem;
