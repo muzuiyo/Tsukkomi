@@ -90,7 +90,21 @@ const MemosPage = ({ isNotFound }: MemosPageProps) => {
       </div>
     );
   } else {
-    return <></>;
+    return (
+      <div className="card-main memos-page-container">
+        <div className="header-container">
+          <div style={{ height: "60px" }} />
+        </div>
+        <div className="main-container">
+          {Array.from({ length: 3 }).map((_: unknown, i: number) => (
+            <div key={i} className="memos-card skeleton-card">
+              <div className="memos-header"><div className="skeleton skeleton-date" /><div className="skeleton skeleton-status" /></div>
+              <div className="memos-body"><div className="skeleton skeleton-line w-90" /><div className="skeleton skeleton-line w-100" /></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 };
 

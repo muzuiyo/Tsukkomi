@@ -74,11 +74,13 @@ const UserPage = () => {
     const fetchUserAndHeatmapAndLabels = async () => {
       setLoading(true);
       try {
-        const user = await getUserByUsername(username);
+        const [user, data, labelsData] = await Promise.all([
+          getUserByUsername(username),
+          getHeatmapData({ username }),
+          getUserLabels(username),
+        ]);
         setPageUser(user);
-        const data = await getHeatmapData({ username });
         setHeatmapData(data);
-        const labelsData = await getUserLabels(username);
         setLabelsList(labelsData);
       } catch (err: unknown) {
         if(err instanceof Error) {
@@ -174,8 +176,8 @@ const UserPage = () => {
               </div>
               <div className="user-labels-list">
                 {
-                  labelsList.map((l, index) => (
-                    <LabelItem key={index} labelName={l.name} count={l.count} username={pageUser.username} />
+                  labelsList.map((l) => (
+                    <LabelItem key={l.name} labelName={l.name} count={l.count} username={pageUser.username} />
                   ))
                 }
               </div>

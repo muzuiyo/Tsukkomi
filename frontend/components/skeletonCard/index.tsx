@@ -1,7 +1,8 @@
 'use client'
+import React from "react";
 import "./skeletonCard.css";
 
-const SkeletonCard = () => {
+const SkeletonCard = React.memo(() => {
   return (
     <div className="memos-card skeleton-card">
       {/* Header */}
@@ -31,6 +32,6 @@ const SkeletonCard = () => {
       </div>
     </div>
   );
-};
+});
 
 export default SkeletonCard;
