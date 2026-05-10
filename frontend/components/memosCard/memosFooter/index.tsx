@@ -68,7 +68,16 @@ const MemosFooter = ({ memos, canEdit, onScreenshoot, onDelete, onEdit }: Props)
   useEffect(() => {
     if (!open) return;
 
-    const update = () => updatePosition();
+    let ticking = false;
+    const update = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updatePosition();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
 
     window.addEventListener("scroll", update, true);
     window.addEventListener("resize", update);

@@ -5,13 +5,54 @@ import MemosEditCard from "../memosEditCard";
 import { Memos } from "@/interfaces/memos";
 import "./memosCard.css";
 import MDEditor from "@uiw/react-md-editor";
-import { toPng } from "html-to-image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { updateMemos } from "@/lib/api/memos";
 import { useToast } from "@/contexts/toastContext";
 import rehypeSanitize from "rehype-sanitize";
 import { visit } from "unist-util-visit";
-import { Root, Element, Text, Parent } from 'hast'; 
+import type { Root, Element, Text, Parent } from 'hast';
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function rehypeHighlight(keyword: string) {
+  return (tree: Root) => {
+    if(!keyword) return;
+    const regex = new RegExp(`(${escapeRegExp(keyword)})`, "gi");
+
+    visit(tree, "text", (node: Text, index: number | undefined, parent: Parent | undefined) => {
+      if(!parent || typeof index !== "number") return;
+      if(
+        parent && "tagName" in parent && typeof parent.tagName === "string"
+        && ["mark", "code", "pre", "a", "script", "style"].includes(parent.tagName)
+      ) {
+        return;
+      }
+
+      const value = node.value;
+      if (!value.toLowerCase().includes(keyword.toLowerCase())) return;
+
+      const parts = value.split(regex);
+
+      const newNodes: (Text | Element)[] = parts.map((part) => {
+        if(part.toLowerCase() === keyword.toLowerCase()) {
+          return {
+            type: "element",
+            tagName: "mark",
+            properties: { className: ["memo-highlight"] },
+            children: [{ type: "text", value: part }],
+          };
+        }
+
+        return { type: "text", value: part };
+      });
+
+      parent.children.splice(index, 1, ...newNodes);
+      return "skip";
+    });
+  };
+}
 
 interface Props {
   memos: Memos;
@@ -43,48 +84,6 @@ const MemosCard = ({ memos, canEdit, onDelete, keyword }: Props) => {
   const handleOnEdit = () => {
     setIsEditing(true);
   };
-
-  function escapeRegExp(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
-  function rehypeHighlight(keyword: string) {
-    return (tree: Root) => {
-      if(!keyword) return;
-      const regex = new RegExp(`(${escapeRegExp(keyword)})`, "gi");
-
-      visit(tree, "text", (node: Text, index: number | undefined, parent: Parent | undefined) => {
-        if(!parent || typeof index !== "number") return;
-        if(
-          parent && "tagName" in parent && typeof parent.tagName === "string"
-          && ["mark", "code", "pre", "a", "script", "style"].includes(parent.tagName)
-        ) {
-          return;
-        }
-
-        const value = node.value;
-        if (!value.toLowerCase().includes(keyword.toLowerCase())) return;
-
-        const parts = value.split(regex);
-
-        const newNodes: (Text | Element)[] = parts.map((part) => {
-          if(part.toLowerCase() === keyword.toLowerCase()) {
-            return {
-              type: "element",
-              tagName: "mark",
-              properties: { className: ["memo-highlight"] },
-              children: [{ type: "text", value: part }],
-            };
-          }
-
-          return { type: "text", value: part };
-        });
-
-        parent.children.splice(index, 1, ...newNodes);
-        return "skip";
-      });
-    };
-  }
 
   const handleDownloadImage = async () => {
     if (!cardRef.current) return;
@@ -133,6 +132,7 @@ const MemosCard = ({ memos, canEdit, onDelete, keyword }: Props) => {
     document.body.appendChild(container);
 
     try {
+      const { toPng } = await import("html-to-image");
       const dataUrl = await toPng(sc, {
         includeQueryParams: true,
         filter: (node) => {

@@ -20,7 +20,7 @@ const SingleMemoPage = () => {
   const { showToast } = useToast();
   const pathname = usePathname(); // 当前地址
   const memoId = pathname.split("/").pop(); // 假设 URL 是 /memos/:id
-  const [memo, setMemo] = useState<Memos | null>();
+  const [memo, setMemo] = useState<Memos | null>(null);
   const [loading, setLoading] = useState(true);
 
   const query: QueryParameters = {

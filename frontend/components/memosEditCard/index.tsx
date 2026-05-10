@@ -107,6 +107,9 @@ const MemosEditCard = ({ memo, onSave, onCancel }: EditableMemosCardProps) => {
               setContent("");
               setIsPublic(1);
               setLabels("");
+            }).catch(() => {
+              // error already handled by caller
+            }).finally(() => {
               setIsLoading(false);
             })
           }}>发布！</button>

@@ -1,19 +1,12 @@
 import { Hono } from "hono";
 import bcrypt from "bcryptjs";
-import { nanoid } from "nanoid";
 
-import type { Env } from "../../types/env";
-import type { AuthUser, PublicUser } from "../../types/user";
+import type { AppBindings, AppVariables } from "../../types/hono";
+import type { PublicUser } from "../../types/user";
 
 import { AuthLoginService } from "../../services/auth/login";
-import { SessionService } from "../../services/session";
-import { setCookie } from "hono/cookie";
+import { createSessionAndSetCookie } from "../../utils/session";
 import { validateEmail, validatePassword } from "../../utils/validators";
-
-type AppBindings = Env;
-type AppVariables = {
-  user: AuthUser;
-};
 
 const loginApp = new Hono<{
   Bindings: AppBindings;
@@ -51,22 +44,7 @@ loginApp.post("/login", async (c) => {
     }
   }
 
-  const sessionId = nanoid();
-  // 365天过期
-  const expiresAt =new Date((Date.now() + 365 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 19);
-  const sessionService = new SessionService(c.env.MEMO_DB);
-  await sessionService.setSession(sessionId, user.id, expiresAt.replace("T", " ").replace("Z", ""));
-
-  const isProd = c.env.IS_PRODUCTION === true;
-  
-  setCookie(c, "sessionId", sessionId, {
-    httpOnly: true,
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: isProd ? "None" : "Lax",
-    secure: isProd,
-    ...(isProd ? { domain: ".lain.today" } : {})
-  });
+  await createSessionAndSetCookie(c, user.id);
 
   const publicUser: PublicUser = {
     id: user.id,

@@ -1,16 +1,10 @@
 import { Hono } from "hono";
 import { optionalAuth } from "../middleware/auth";
 
-import type { Env } from "../types/env";
-import type { AuthUser } from "../types/user";
+import type { AppBindings, AppVariables } from "../types/hono";
 
 import { LabelsService } from "../services/labels";
 import { AuthMeService } from "../services/auth/me";
-
-type AppBindings = Env;
-type AppVariables = {
-  user: AuthUser;
-};
 
 const labelsApp = new Hono<{
   Bindings: AppBindings;

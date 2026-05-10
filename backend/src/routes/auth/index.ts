@@ -1,19 +1,13 @@
 import { Hono } from "hono";
 
-import type { Env } from "../../types/env";
-import type { AuthUser } from "../../types/user";
+import type { AppBindings, AppVariables } from "../../types/hono";
 
 import meApp from "./me";
 import registerApp from "./register";
-import LoginApp from "./login";
+import loginApp from "./login";
 import logoutApp from "./logout";
 import deleteApp from "./delete";
 import passwordApp from "./password";
-
-type AppBindings = Env;
-type AppVariables = {
-  user: AuthUser;
-};
 
 const authApp = new Hono<{
   Bindings: AppBindings;
@@ -22,7 +16,7 @@ const authApp = new Hono<{
 
 authApp.route("/", meApp);
 authApp.route("/", registerApp);
-authApp.route("/", LoginApp);
+authApp.route("/", loginApp);
 authApp.route("/", logoutApp);
 authApp.route("/", deleteApp);
 authApp.route("/", passwordApp);

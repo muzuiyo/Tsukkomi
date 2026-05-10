@@ -9,6 +9,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import { useSearchParams } from "next/navigation";
@@ -36,9 +37,14 @@ const MemosList = forwardRef<MemosListRef, MemosListProps>(({ query }, ref) => {
   const { showToast } = useToast();
   const searchParams = useSearchParams();
 
+  const hasMoreRef = useRef(hasMore);
+  const isLoadingRef = useRef(isLoading);
+  hasMoreRef.current = hasMore;
+  isLoadingRef.current = isLoading;
+
   const fetchMemosList = useCallback(
     async (currentPage: number, forceFresh = false) => {
-      if (isLoading || (!hasMore && !forceFresh)) return;
+      if (isLoadingRef.current || (!hasMoreRef.current && !forceFresh)) return;
 
       setIsLoading(true);
 
@@ -78,7 +84,7 @@ const MemosList = forwardRef<MemosListRef, MemosListProps>(({ query }, ref) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, hasMore, isLoading],
+    [query],
   );
 
   // URL 参数变化时重新加载
@@ -133,7 +139,7 @@ const MemosList = forwardRef<MemosListRef, MemosListProps>(({ query }, ref) => {
           {isLoading || isInitialLoading ? (
             isInitialLoading ? (
               <>
-                {Array.from({ length: 20 }).map((_, index) => (
+                {Array.from({ length: 5 }).map((_: unknown, index: number) => (
                   <SkeletonCard key={index} />
                 ))}
               </>

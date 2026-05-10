@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
   query: QueryParameters;
-  onChange?: (query: QueryParameters) => void;
 }
 
 const SearchBar = ({ query }: SearchBarProps) => {

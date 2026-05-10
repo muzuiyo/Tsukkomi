@@ -10,7 +10,7 @@ export class MemosService {
 
   async getMemoById(id: string) {
     const memo = await this.db
-      .prepare("SELECT * FROM memos WHERE id = ?")
+      .prepare("SELECT id, user_id, content, is_public, is_deleted, created_at FROM memos WHERE id = ?")
       .bind(id)
       .first<MemoRow>();
     return memo;
@@ -30,7 +30,7 @@ export class MemosService {
     } = params;
 
     const offset = (page - 1) * pageSize;
-    const sqlParams: any[] = [];
+    const sqlParams: (string | number)[] = [];
 
     // ---------- 可见性 ----------
     let visibilityCondition = "";
@@ -158,7 +158,7 @@ export class MemosService {
     const memosResult = await this.db
       .prepare(memoSql)
       .bind(...memoIds)
-      .all<any>();
+      .all<{ id: string; user_id: string; username: string; content: string; is_public: 0 | 1; created_at: string; labels: string | null }>();
 
     return (
       memosResult.results?.map((row) => ({
@@ -495,13 +495,13 @@ export class MemosService {
       .then(() => {});
   }
 
-  async deleteMemosByIds(ids: string[]): Promise<void> {
+  async deleteMemosByIds(ids: string[], userId: string): Promise<void> {
     const placeholders = ids.map(() => "?").join(",");
     await this.db
       .prepare(
-        `UPDATE memos SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP, deleted_at = CURRENT_TIMESTAMP WHERE id IN (${placeholders}) AND is_deleted = 0`,
+        `UPDATE memos SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP, deleted_at = CURRENT_TIMESTAMP WHERE id IN (${placeholders}) AND user_id = ? AND is_deleted = 0`,
       )
-      .bind(...ids)
+      .bind(...ids, userId)
       .run()
       .then(() => {});
   }
@@ -512,40 +512,28 @@ export class MemosService {
     endDate: string,
     offsetMs: number
   ) {
+    const offsetSeconds = Math.round(offsetMs / 1000);
+    const sign = offsetSeconds >= 0 ? "+" : "";
     const sql = `
-      SELECT created_at
+      SELECT DATE(created_at, '${sign}${offsetSeconds} seconds') as date_key, COUNT(*) as count
       FROM memos
       WHERE user_id = ?
         AND is_deleted = 0
         AND is_public = 1
         AND created_at >= ?
         AND created_at < ?
-      ORDER BY created_at ASC
+      GROUP BY date_key
+      ORDER BY date_key ASC
     `;
 
     const result = await this.db
       .prepare(sql)
       .bind(userId, startDate, endDate)
-      .all<{ created_at: string }>();
+      .all<{ date_key: string; count: number }>();
 
-    const countsMap = new Map<string, number>();
-
-    (result.results ?? []).forEach((row) => {
-      const utcDate = new Date(row.created_at); // 数据库 UTC 时间
-      const localDate = new Date(utcDate.getTime() + offsetMs);
-
-      // 转成 YYYY-MM-DD
-      const y = localDate.getFullYear();
-      const m = String(localDate.getMonth() + 1).padStart(2, "0");
-      const d = String(localDate.getDate()).padStart(2, "0");
-      const dateKey = `${y}-${m}-${d}`;
-
-      countsMap.set(dateKey, (countsMap.get(dateKey) ?? 0) + 1);
-    });
-
-    // 转成数组并按日期升序
-    return Array.from(countsMap.entries())
-      .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    return (result.results ?? []).map((row) => ({
+      date: row.date_key,
+      count: row.count,
+    }));
   }
 }

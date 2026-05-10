@@ -1,11 +1,6 @@
-import type { Context, Next } from "hono";
-import type { AppBindings, AppVariables } from "../types/hono";
+import type { Next } from "hono";
+import type { AppContext } from "../types/hono";
 import { MemosService } from "../services/memos";
-
-type AppContext = Context<{
-  Bindings: AppBindings;
-  Variables: AppVariables;
-}>;
 
 // requireMemoOwner 中间件, 验证用户是否为 Memo 的所有者, 仅用于删除和更新 Memo
 export async function requireMemoOwner(c: AppContext, next: Next) {
