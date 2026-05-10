@@ -51,12 +51,8 @@ registerApp.post("/register", async (c) => {
     );
   }
 
-  // 检查邮箱或用户名是否已存在（并行查询）
-  const [emailExists, usernameExists] = await Promise.all([
-    registerService.isEmailExists(email),
-    registerService.isUsernameExists(username),
-  ]);
-  if (emailExists || usernameExists) {
+  // 检查邮箱或用户名是否已存在
+  if (await registerService.isEmailExists(email) || await registerService.isUsernameExists(username)) {
     return c.json(
       {
         success: false,

@@ -1,12 +1,10 @@
 'use client'
-import React from "react";
-
 interface Props {
   createdAt: string;
   isPublic: 0 | 1;
 }
 
-const MemosHeader = React.memo(({ createdAt, isPublic }: Props) => {
+const MemosHeader = ({ createdAt, isPublic }: Props) => {
   const localDate = new Date(createdAt.replace(" ", "T") + "Z");
   const localTime = localDate.toLocaleString();
   return (
@@ -19,6 +17,6 @@ const MemosHeader = React.memo(({ createdAt, isPublic }: Props) => {
       </span>
     </div>
   );
-});
+};
 
 export default MemosHeader;

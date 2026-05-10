@@ -28,7 +28,6 @@ labelsApp.get("/", optionalAuth, async (c) => {
 
   const onlyPublic = !loginUser || loginUser.username !== username;
   const labelsCountData = await labelsService.getLabelCountByUserId(user.id, onlyPublic);
-  c.header("Cache-Control", "public, max-age=300");
   return c.json({ success: true, data: labelsCountData, code: 200 }, 200);
 });
 

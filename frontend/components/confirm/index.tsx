@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import "./confirm.css";
 type ConfirmFn = (message: string) => Promise<boolean>;
 
@@ -15,19 +15,16 @@ export const ConfirmProvider = ({
     resolve?: (v: boolean) => void;
   } | null>(null);
 
-  const stateRef = useRef(state);
-  stateRef.current = state;
-
-  const confirm: ConfirmFn = useCallback((message) => {
+  const confirm: ConfirmFn = (message) => {
     return new Promise<boolean>((resolve) => {
       setState({ message, resolve });
     });
-  }, []);
+  };
 
-  const handleClose = useCallback((result: boolean) => {
-    stateRef.current?.resolve?.(result);
+  const handleClose = (result: boolean) => {
+    state?.resolve?.(result);
     setState(null);
-  }, []);
+  };
 
   return (
     <ConfirmContext.Provider value={confirm}>

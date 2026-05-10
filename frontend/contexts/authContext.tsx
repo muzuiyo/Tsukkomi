@@ -1,13 +1,14 @@
 "use client";
 
 import { authLogout, authMe } from "@/lib/api/auth";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "@/interfaces/user";
 
 interface AuthContextType {
   currentUser: User | null;
   authLoading: boolean;
-  logout: () => Promise<boolean>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +26,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     setLoading(true);
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
       await authLogout();
       setUser(null);
@@ -56,12 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
     return false;
-  }, []);
-
-  const value = useMemo(() => ({ currentUser: user, authLoading, logout }), [user, authLoading, logout]);
+  };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ currentUser: user, authLoading, logout }}>
       {children}
     </AuthContext.Provider>
   );

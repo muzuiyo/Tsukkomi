@@ -5,7 +5,9 @@ import { requireMemoOwner } from "../middleware/memos";
 import type { AppBindings, AppVariables } from "../types/hono";
 import type { AuthUser } from "../types/user";
 import { MemosService } from "../services/memos";
+import { LabelsService } from "../services/labels";
 import { AuthMeService } from "../services/auth/me";
+import { Memo } from "../types/memo";
 import { isValidUTC } from "../utils/validators";
 
 const memosApp = new Hono<{
@@ -108,7 +110,7 @@ memosApp.get("/", optionalAuth, async (c) => {
   }
 
   // label=work&label=life
-  const labels = (c.req.queries("label") ?? []).map(l => l.trim()).filter(l => l.length > 0);
+  const labels = (c.req.queries("label") ?? []).map(l => l.trim()).filter(l => l.length > 0);;
   // ---------- 时间区间 ----------
   const startDate = c.req.query("startDate");
   const endDate = c.req.query("endDate");
@@ -150,15 +152,28 @@ memosApp.get("/", optionalAuth, async (c) => {
     currentUserId: user?.id || undefined
   });
 
+  const memosInfo: Memo[] = [];
+  for(const memo of memos) {
+    memosInfo.push({
+      id: memo.id,
+      userId: memo.userId,
+      username: memo.username,
+      content: memo.content,
+      isPublic: memo.isPublic,
+      createdAt: memo.createdAt,
+      labels: memo.labels,
+    });
+  }
+
   return c.json({
     success: true,
-    data: memos,
+    data: memosInfo,
     code: 200,
   });
 });
 
 // 获取单个 Memo 详情
-// Public Memo 不需要认证，Private Memo 需要认证
+// Public Memo 列表不需要认证，Private Memo 列表需要认证
 memosApp.get("/:id", optionalAuth, async (c) => {
   const memosService = new MemosService(c.env.MEMO_DB);
   const memoId = c.req.param("id");
@@ -166,25 +181,41 @@ memosApp.get("/:id", optionalAuth, async (c) => {
   if(!memoId) {
     return c.json({ success: false, error: "Memo ID is required", code: 400 }, 400);
   }
-
-  // 单次 JOIN 查询获取 memo + username + labels
-  const memoInfo = await memosService.getMemoWithLabelsById(memoId);
-  if(!memoInfo) {
+  const memo = await memosService.getMemoById(memoId);
+  if(!memo || memo.is_deleted === 1) {
     return c.json({ success: false, error: "Memo not found", code: 404 }, 404);
   }
-
-  // 先做权限校验，再返回数据
-  if(memoInfo.isPublic === 1) {
-    c.header("Cache-Control", "public, max-age=120");
-    return c.json({ success: true, data: memoInfo, code: 200 });
+  const labelsService = new LabelsService(c.env.MEMO_DB);
+  const authMeService = new AuthMeService(c.env.MEMO_DB);
+  const labels = await labelsService.getLabelsByMemoId(memoId) || [];
+  const memoUsername = await authMeService.getUserByUserId(memo.user_id);
+  const memoInfo: Memo = {
+    id: memo.id,
+    userId: memo.user_id,
+    username: memoUsername?.username || "unknown user",
+    content: memo.content,
+    isPublic: memo.is_public,
+    createdAt: memo.created_at,
+    labels: labels.map((l) => l.name) as string[],
+  }
+  if(memo.is_public === 1) {
+    return c.json({
+      success: true,
+      data: memoInfo,
+      code: 200,
+    });
   }
   if(!user) {
     return c.json({ success: false, error: "Authentication required", code: 401 }, 401);
   }
-  if(memoInfo.userId !== user.id && user.role !== "admin") {
+  if(memo.user_id !== user.id && user.role !== "admin") {
     return c.json({ success: false, error: "Forbidden", code: 403 }, 403);
   }
-  return c.json({ success: true, data: memoInfo, code: 200 });
+  return c.json({
+    success: true,
+    data: memoInfo,
+    code: 200,
+  });
 });
 
 // 更新 Memo
@@ -392,7 +423,6 @@ memosApp.get("/graph/heatmap", async (c) => {
     endDate?.replace("T", " ").replace("Z", ""),
     offsetMs
   );
-  c.header("Cache-Control", "public, max-age=300");
   return c.json({
     success: true,
     data: heatmap ?? [],

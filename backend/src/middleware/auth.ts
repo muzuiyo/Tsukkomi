@@ -2,52 +2,34 @@ import { getCookie } from "hono/cookie";
 import type { Next } from "hono";
 import type { AppContext } from "../types/hono";
 import type { AuthUser } from "../types/user";
-
-interface SessionUserRow {
-  user_id: string;
-  expires_at: string;
-  id: string;
-  email: string;
-  username: string;
-  role: string;
-  is_deleted: 0 | 1;
-  created_at: string;
-  deleted_at: string | null;
-}
+import { AuthMeService } from "../services/auth/me";
+import { SessionService } from "../services/session";
 
 async function resolveAuthUser(c: AppContext): Promise<AuthUser | null> {
   const sessionId = getCookie(c, "sessionId");
   if (!sessionId) return null;
 
-  // 单次 JOIN 查询：session + user
-  const row = await c.env.MEMO_DB
-    .prepare(
-      `SELECT s.user_id, s.expires_at,
-              u.id, u.email, u.username, u.role, u.is_deleted, u.created_at, u.deleted_at
-       FROM sessions s
-       JOIN users u ON s.user_id = u.id
-       WHERE s.id = ?`
-    )
-    .bind(sessionId)
-    .first<SessionUserRow>();
-
-  if (!row) return null;
+  const sessionService = new SessionService(c.env.MEMO_DB);
+  const session = await sessionService.getSessionById(sessionId);
+  if (!session) return null;
 
   // 过期 — 仅忽略，不主动清理（避免每次请求触发写操作）
-  if (Date.now() > new Date(row.expires_at.replace(" ", "T") + "Z").getTime()) {
+  if (Date.now() > new Date(session.expires_at.replace(" ", "T") + "Z").getTime()) {
     return null;
   }
 
-  if (row.is_deleted === 1) return null;
+  const meService = new AuthMeService(c.env.MEMO_DB);
+  const user = await meService.getUserByUserId(session.user_id);
+  if (!user || user.is_deleted === 1) return null;
 
   return {
-    id: row.id,
-    email: row.email,
-    username: row.username,
-    role: row.role as "user" | "admin",
-    isDeleted: Boolean(row.is_deleted),
-    createdAt: row.created_at,
-    deletedAt: row.deleted_at,
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+    isDeleted: Boolean(user.is_deleted),
+    createdAt: user.created_at,
+    deletedAt: user.deleted_at,
   };
 }
 

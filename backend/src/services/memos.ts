@@ -16,35 +16,6 @@ export class MemosService {
     return memo;
   }
 
-  async getMemoWithLabelsById(id: string) {
-    const row = await this.db
-      .prepare(
-        `SELECT m.id, m.user_id, m.content, m.is_public, m.is_deleted, m.created_at,
-                u.username,
-                GROUP_CONCAT(l.name) as labels
-         FROM memos m
-         JOIN users u ON m.user_id = u.id
-         LEFT JOIN memo_labels ml ON m.id = ml.memo_id
-         LEFT JOIN labels l ON ml.label_id = l.id
-         WHERE m.id = ?
-         GROUP BY m.id`
-      )
-      .bind(id)
-      .first<{ id: string; user_id: string; content: string; is_public: 0 | 1; is_deleted: 0 | 1; created_at: string; username: string; labels: string | null }>();
-
-    if (!row || row.is_deleted === 1) return null;
-
-    return {
-      id: row.id,
-      userId: row.user_id,
-      username: row.username,
-      content: row.content,
-      isPublic: row.is_public,
-      createdAt: row.created_at,
-      labels: row.labels ? row.labels.split(",") : [],
-    };
-  }
-
   async getMemos(params: QueryParameters) {
     const {
       userId,
