@@ -78,10 +78,7 @@ const HomeHeader = ({ user }: HeaderProps) => {
             <div className="logout-link" onClick={async () => {
               // 登出账号
               if(await tconfirm("确认登出账号吗？")) {
-                const ok = await logout();
-                if (ok) {
-                  window.location.reload();
-                }
+                logout();
               }
             }}>
               <div className="header-settings-content">
