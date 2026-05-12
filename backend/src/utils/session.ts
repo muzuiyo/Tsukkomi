@@ -23,7 +23,7 @@ export async function createSessionAndSetCookie(
     maxAge: 60 * 60 * 24 * 365,
     sameSite: isProd ? "None" : "Lax",
     secure: isProd,
-    ...(isProd ? { domain: "tsukkomi.lain.today" } : {}),
+    ...(isProd ? { domain: ".lain.today" } : {}),
   });
 
   return sessionId;
