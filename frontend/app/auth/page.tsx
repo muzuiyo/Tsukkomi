@@ -2,17 +2,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthForm from "@/components/authForm";
+import { useAuth } from "@/contexts/authContext";
 import siteConfig from "@/site.config";
 import "./auth.page.css";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const isLogin = mode === "login";
 
-  const handleSuccess = () => {
-    // 前往 memos 主页
+  const handleSuccess = async () => {
+    await refreshUser();
     router.push("/memos");
   };
 

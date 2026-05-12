@@ -1,14 +1,14 @@
 "use client";
 
 import { authLogout, authMe } from "@/lib/api/auth";
-import { usePathname } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { User } from "@/interfaces/user";
 
 interface AuthContextType {
   currentUser: User | null;
   authLoading: boolean;
-  logout: () => void;
+  logout: () => Promise<boolean>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,25 +26,24 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setLoading] = useState(true);
-  const pathname = usePathname();
 
-  useEffect(() => {
+  const fetchUser = useCallback(async () => {
     setLoading(true);
-    const fetchUser = async () => {
-      try {
-        const data = await authMe();
-        setUser(data);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    try {
+      const data = await authMe();
+      setUser(data);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const logout = async () => {
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const logout = useCallback(async () => {
     try {
       await authLogout();
       setUser(null);
@@ -58,10 +57,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
     return false;
-  };
+  }, []);
+
+  const value = useMemo(() => ({ currentUser: user, authLoading, logout, refreshUser: fetchUser }), [user, authLoading, logout, fetchUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser: user, authLoading, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
