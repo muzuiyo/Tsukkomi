@@ -1,3 +1,4 @@
+import { UserRow } from "../../types/db";
 import bcrypt from "bcryptjs";
 
 export class AuthRegisterService {
@@ -11,23 +12,26 @@ export class AuthRegisterService {
   }
 
   async isEmailExists(email: string): Promise<boolean> {
+    // 邮箱检查时忽略大小写和前后空格
     email = email?.trim().toLowerCase();
     return this.db
       .prepare("SELECT COUNT(*) AS count FROM users WHERE email = ?")
       .bind(email)
-      .first<{ count: number }>()
-      .then((row) => (row?.count ?? 0) > 0);
+      .first<UserRow>()
+      .then((row: any) => row.count > 0);
   }
 
   async isUsernameExists(username: string): Promise<boolean> {
+    // 用户名检查时忽略前后空格并转小写
     username = username?.trim().toLowerCase();
+    // 小写值比较
     return this.db
       .prepare(
         "SELECT COUNT(*) AS count FROM users WHERE LOWER(username) = ?"
       )
       .bind(username)
-      .first<{ count: number }>()
-      .then((row) => (row?.count ?? 0) > 0);
+      .first<UserRow>()
+      .then((row: any) => row.count > 0);
   }
 
   async createUser(
@@ -36,8 +40,9 @@ export class AuthRegisterService {
     email: string,
     password: string,
   ): Promise<void> {
+    // 邮箱和用户名存储时都忽略大小写和前后空格
     email = email?.trim().toLowerCase();
-    username = username?.trim().toLowerCase();
+    username = username?.trim().toLocaleLowerCase();
     const hashedPassword = await bcrypt.hash(password, 10);
     await this.db
       .prepare(

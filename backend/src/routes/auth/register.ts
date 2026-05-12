@@ -1,11 +1,18 @@
 import { Hono } from "hono";
 import { nanoid } from "nanoid";
 
-import type { AppBindings, AppVariables } from "../../types/hono";
+import type { Env } from "../../types/env";
+import type { AuthUser, } from "../../types/user";
 
 import { AuthRegisterService } from "../../services/auth/register";
-import { createSessionAndSetCookie } from "../../utils/session";
+import { SessionService } from "../../services/session";
+import { setCookie } from "hono/cookie";
 import { validateEmail, validatePassword, validateUsername } from "../../utils/validators";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const registerApp = new Hono<{
   Bindings: AppBindings;
@@ -51,12 +58,24 @@ registerApp.post("/register", async (c) => {
     );
   }
 
-  // 检查邮箱或用户名是否已存在
-  if (await registerService.isEmailExists(email) || await registerService.isUsernameExists(username)) {
+  // 检查邮箱是否已存在
+  if (await registerService.isEmailExists(email)) {
     return c.json(
       {
         success: false,
-        error: "Email or username already exists",
+        error: "Email already exists",
+        code: 400,
+      },
+      400,
+    );
+  }
+
+  // 检查用户名是否已存在
+  if (await registerService.isUsernameExists(username)) {
+    return c.json(
+      {
+        success: false,
+        error: "Username already exists",
         code: 400,
       },
       400,
@@ -68,7 +87,19 @@ registerApp.post("/register", async (c) => {
   await registerService.createUser(id, username, email, password);
 
   // 响应头返回 Session
-  await createSessionAndSetCookie(c, id);
+  const sessionId = nanoid();
+  const expiresAt =new Date((Date.now() + 365 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 19);
+  const sessionService = new SessionService(c.env.MEMO_DB);
+  await sessionService.setSession(sessionId, id, expiresAt.replace("T", " ").replace("Z", ""));
+  const isProd = c.env.IS_PRODUCTION === true;
+
+  setCookie(c, "sessionId", sessionId, {
+    httpOnly: true,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: isProd ? "None" : "Lax",
+    secure: isProd,
+  });
 
   return c.json(
     {

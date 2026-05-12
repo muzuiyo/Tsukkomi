@@ -8,7 +8,7 @@ import SearchBar from "@/components/searchBar";
 import HomeFooter from "@/components/homeFooter";
 import { useToast } from "@/contexts/toastContext";
 import { createMemos } from "@/lib/api/memos";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { QueryParameters } from "@/interfaces/query";
 import { useSearchParams } from "next/navigation";
 
@@ -22,7 +22,7 @@ const MemosPage = ({ isNotFound }: MemosPageProps) => {
   const listRef = useRef<MemosListRef>(null);
   const searchParams = useSearchParams();
   const toNumber = (v: string | null) => v && !Number.isNaN(Number(v)) ? Number(v) : undefined;
-  const query: QueryParameters = useMemo(() => ({
+  const query: QueryParameters = {
     username: searchParams.get("username")?.trim() || undefined,
     page: toNumber(searchParams.get("page")),
     pageSize: toNumber(searchParams.get("pageSize")),
@@ -31,7 +31,7 @@ const MemosPage = ({ isNotFound }: MemosPageProps) => {
     labels: searchParams.getAll("label").map(l => l.trim()).filter(Boolean),
     startDate: searchParams.get("startDate")?.trim() || undefined,
     endDate: searchParams.get("endDate")?.trim() || undefined,
-  }), [searchParams]);
+  }
 
   const preMemo = {
     id: undefined,

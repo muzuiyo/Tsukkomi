@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-import type { AppBindings, AppVariables } from "./types/hono";
+import type { Env } from "./types/env";
+import type { AuthUser } from "./types/user";
 
 import authApp from "./routes/auth";
 import memosApp from "./routes/memos";
@@ -11,6 +12,12 @@ import labelsApp from "./routes/labels";
 // ==============================
 // Hono 类型扩展
 // ==============================
+
+type AppBindings = Env;
+
+type AppVariables = {
+  user: AuthUser;
+};
 
 export const app = new Hono<{
   Bindings: AppBindings;
@@ -71,11 +78,10 @@ app.notFound((c) => {
 // ==============================
 
 app.onError((err, c) => {
-  const isProd = c.env.IS_PRODUCTION === true;
   return c.json(
     {
       success: false,
-      error: isProd ? "Internal Server Error" : `Internal Server Error: ${err.message}`,
+      error: `Internal Server Error: ${err.message}`,
       code: 500,
     },
     500

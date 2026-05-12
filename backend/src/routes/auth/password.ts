@@ -1,9 +1,15 @@
 // 用户信息相关
 import { Hono } from "hono";
-import type { AppBindings, AppVariables } from "../../types/hono";
+import type { Env } from "../../types/env";
+import type { AuthUser } from "../../types/user";
 import { Resend } from "resend";
 import { AuthPasswordService } from "../../services/auth/password";
 import { validateEmail, validatePassword } from "../../utils/validators";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const passwordApp = new Hono<{
   Bindings: AppBindings;
@@ -12,13 +18,12 @@ const passwordApp = new Hono<{
 
 passwordApp.post("/password/forget", async (c) => {
   const { email } = await c.req.json();
+  const authPasswordService = new AuthPasswordService(c.env.MEMO_DB);
+  const token = await authPasswordService.createPasswordResetToken(email);
 
   if(!validateEmail(email)) {
     return c.json({ success: false, error: "Invalid email format", code: 400 }, 400);
   }
-
-  const authPasswordService = new AuthPasswordService(c.env.MEMO_DB);
-  const token = await authPasswordService.createPasswordResetToken(email);
 
   if(!token) {
     return c.json({
@@ -27,22 +32,18 @@ passwordApp.post("/password/forget", async (c) => {
     });
   }
   const resetURL = c.env.FRONT_URL + `/auth/forgot?token=${token}`;
-  // 使用第三方 RESEND API 发送邮件
-  try {
-    const resend = new Resend(c.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: c.env.NOREPLY_EMAIL,
-      to: email,
-      subject: "TSUKKOMI | Reset your password",
-      html: `
-          <p>Click the link below to reset your password:</p>
-          <a href="${resetURL}">${resetURL}</a>
-          <p>This link will expire in 5 minutes.</p>
-      `
-    });
-  } catch (err) {
-    console.error("Failed to send reset email:", err);
-  }
+  // 使用第三方 RESEND API 发送邮件 
+  const resend = new Resend(c.env.RESEND_API_KEY);
+  await resend.emails.send({
+    from: c.env.NOREPLY_EMAIL,
+    to: email,
+    subject: "TSUKKOMI | Reset your password",
+    html: `
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetURL}">${resetURL}</a>
+        <p>This link will expire in 5 minutes.</p>
+    `
+  });
   return c.json({
     success: true,
     message: "If the email exists, a reset link has been send, please check the Trash or Junk Box in your e-mail, the link will expire in 5 minutes."

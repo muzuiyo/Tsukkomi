@@ -1,9 +1,14 @@
 // 用户信息相关
 import { Hono } from "hono";
 import { requireAuth } from "../../middleware/auth";
-import type { AppBindings, AppVariables } from "../../types/hono";
-import type { PublicUser } from "../../types/user";
+import type { Env } from "../../types/env";
+import type { AuthUser, PublicUser } from "../../types/user";
 import { AuthMeService } from "../../services/auth/me";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const meApp = new Hono<{
   Bindings: AppBindings;

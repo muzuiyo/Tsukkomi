@@ -49,11 +49,11 @@ export async function proxy(request: NextRequest) {
       (startDate && !isValidDate(startDate)) ||
       (endDate && !isValidDate(endDate))
     ) {
-      return NextResponse.rewrite(new URL("/404", request.url));
+      return NextResponse.redirect(new URL("/404", request.url));
     }
 
     if(startDate && endDate && startDate > endDate) {
-      return NextResponse.rewrite(new URL("/404", request.url));
+      return NextResponse.redirect(new URL("/404", request.url));
     }
   }
 
@@ -69,6 +69,7 @@ export async function proxy(request: NextRequest) {
           },
         });
         const data = await res.json();
+        console.log(cookie);
         if(!data.success) {
           return NextResponse.next();
         }

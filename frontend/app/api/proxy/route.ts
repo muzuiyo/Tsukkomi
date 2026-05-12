@@ -12,44 +12,6 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // SSRF protection: validate URL
-  let parsedUrl: URL;
-  try {
-    parsedUrl = new URL(url);
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid URL" },
-      { status: 400 }
-    );
-  }
-
-  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-    return NextResponse.json(
-      { error: "Only HTTP and HTTPS protocols are allowed" },
-      { status: 400 }
-    );
-  }
-
-  // Block private/internal IP ranges
-  const hostname = parsedUrl.hostname;
-  const isPrivateIP =
-    /^127\./.test(hostname) ||
-    /^10\./.test(hostname) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
-    /^192\.168\./.test(hostname) ||
-    /^169\.254\./.test(hostname) ||
-    hostname === "localhost" ||
-    hostname === "0.0.0.0" ||
-    hostname === "::1" ||
-    hostname === "[::1]";
-
-  if (isPrivateIP) {
-    return NextResponse.json(
-      { error: "Access to internal addresses is not allowed" },
-      { status: 400 }
-    );
-  }
-
   try {
     const imageResponse = await fetch(url);
 

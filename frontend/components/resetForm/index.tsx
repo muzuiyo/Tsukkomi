@@ -4,7 +4,7 @@ import { validatePassword } from "@/lib/validators";
 import "./resetForm.css";
 
 interface ResetFormProps {
-  onSubmit: (password: string) => Promise<void>;
+  onSubmit: (password: string, confirmPassword: string) => Promise<void>;
 }
 
 const ResetForm = ({ onSubmit }: ResetFormProps) => {
@@ -29,7 +29,7 @@ const ResetForm = ({ onSubmit }: ResetFormProps) => {
     setLoading(true);
 
     try {
-      await onSubmit(password);
+      await onSubmit(password, confirmPassword);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "操作失败，请稍后重试");
     } finally {

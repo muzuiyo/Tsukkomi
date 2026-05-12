@@ -6,7 +6,7 @@ export function createMemos(data: {
   content: string;
   isPublic: 0 | 1;
   labels: string[];
-}): Promise<Memos> {
+}) {
   return apiFetch("/memos", {
     method: "POST",
     body: JSON.stringify(data),
@@ -80,9 +80,16 @@ export function updateMemos(
   });
 }
 
-export function deleteMemos(id: string): Promise<void> {
+export function deleteMemos(id: string) {
   return apiFetch(`/memos/${id}`, {
     method: "DELETE",
+  });
+}
+
+export function deleteMemosBatch(ids: string[]) {
+  return apiFetch(`/memos/batch`, {
+    method: "DELETE",
+    body: JSON.stringify({ ids: ids }),
   });
 }
 

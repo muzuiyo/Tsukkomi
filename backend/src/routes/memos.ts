@@ -2,13 +2,17 @@ import { Hono } from "hono";
 import { optionalAuth, requireAuth } from "../middleware/auth";
 import { requireMemoOwner } from "../middleware/memos";
 
-import type { AppBindings, AppVariables } from "../types/hono";
-import type { AuthUser } from "../types/user";
+import type { Env } from "../types/env";
+import type { AuthUser, } from "../types/user";
 import { MemosService } from "../services/memos";
 import { LabelsService } from "../services/labels";
 import { AuthMeService } from "../services/auth/me";
 import { Memo } from "../types/memo";
-import { isValidUTC } from "../utils/validators";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const memosApp = new Hono<{
   Bindings: AppBindings;
@@ -115,6 +119,16 @@ memosApp.get("/", optionalAuth, async (c) => {
   const startDate = c.req.query("startDate");
   const endDate = c.req.query("endDate");
 
+  // 辅助函数：校验 UTC 时间格式
+  function isValidUTC(dateStr: string): boolean {
+    // 精确匹配 ISO 8601 UTC 时间格式：2025-01-01T10:00:00Z 或带毫秒 2025-01-01T10:00:00.000Z
+    const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
+    if (!regex.test(dateStr)) return false;
+
+    const date = new Date(dateStr);
+    return !isNaN(date.getTime());
+  }
+
   // 格式校验
   if (startDate && !isValidUTC(startDate)) {
     return c.json({
@@ -139,7 +153,7 @@ memosApp.get("/", optionalAuth, async (c) => {
       code: 400
     }, 400);
   }
-
+  
   const memos = await memosService.getMemos({
     userId: searchUserId,
     page,
@@ -278,17 +292,9 @@ memosApp.delete("/:id", requireAuth, requireMemoOwner, async (c) => {
 });
 
 memosApp.delete("/batch", requireAuth, async (c) => {
-  const user = c.get("user");
   const memosService = new MemosService(c.env.MEMO_DB);
   const body = await c.req.json();
   const ids: string[] = body.ids;
-  if(!Array.isArray(ids) || ids.some((id) => typeof id !== "string")) {
-    return c.json({
-      success: false,
-      error: "Invalid IDs format",
-      code: 400,
-    }, 400);
-  }
   if(ids.length === 0) {
     return c.json({
       success: false,
@@ -296,7 +302,14 @@ memosApp.delete("/batch", requireAuth, async (c) => {
       code: 400,
     }, 400);
   }
-  await memosService.deleteMemosByIds(ids, user.id);
+  if(!Array.isArray(ids) || ids.some((id) => typeof id !== "string")) {
+    return c.json({
+      success: false,
+      error: "Invalid IDs format",
+      code: 400,
+    }, 400);
+  }
+  await memosService.deleteMemosByIds(ids);
   return c.json({
     success: true,
     message: "Memos deleted successfully",
@@ -346,6 +359,17 @@ memosApp.get("/graph/heatmap", async (c) => {
   // ---------- 时间区间 ----------
   let startDate = c.req.query("startDate");
   let endDate = c.req.query("endDate");
+
+  // 辅助函数：校验 UTC 时间格式
+  function isValidUTC(dateStr: string): boolean {
+    // 精确匹配 ISO 8601 UTC 时间格式：2025-01-01T10:00:00Z 或带毫秒 2025-01-01T10:00:00.000Z
+    const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
+    if (!regex.test(dateStr)) return false;
+
+    const date = new Date(dateStr);
+    return !isNaN(date.getTime());
+  }
+
 
   if (!startDate && !endDate) {
     const today = new Date();

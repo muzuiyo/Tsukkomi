@@ -42,7 +42,7 @@ body {
 }
 
 body {
-  color: var(--text-primary);
+  color: var(--foreground);
   background: var(--background);
   font-family: Open Sans, sans-serif, Arial, Helvetica;
   -webkit-font-smoothing: antialiased;
@@ -121,9 +121,6 @@ a {
     .main-container {
       padding: 10px 15px;
     }
-    .card-main {
-      margin: 20px 10px;
-    }
 }
 
 .not-found {
@@ -136,5 +133,11 @@ a {
 
 .not-found p {
   line-height: 1.5rem;
+}
+
+@media (max-width: 1100px) {
+  .card-main {
+    margin: 20px 10px;
+  }
 }
 

@@ -45,7 +45,7 @@ export interface SessionRow {
 export interface PasswordResetTokenRow {
   id: string;
   user_id: string;
-  token_hash: string;
+  token: string;
   expires_at: string;
   created_at: string;
 }

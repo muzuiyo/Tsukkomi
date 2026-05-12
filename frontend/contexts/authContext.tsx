@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     fetchUser();
-  }, []);
+  }, [pathname]);
 
   const logout = async () => {
     try {

@@ -1,11 +1,19 @@
-import { getCookie } from "hono/cookie";
-import type { Next } from "hono";
-import type { AppContext } from "../types/hono";
+import { deleteCookie, getCookie } from "hono/cookie";
+import type { Context, Next } from "hono";
+import type { AppBindings, AppVariables } from "../types/hono";
 import type { AuthUser } from "../types/user";
 import { AuthMeService } from "../services/auth/me";
 import { SessionService } from "../services/session";
 
-async function resolveAuthUser(c: AppContext): Promise<AuthUser | null> {
+type AppContext = Context<{
+  Bindings: AppBindings;
+  Variables: AppVariables;
+}>;
+
+async function resolveAuthUser(
+  c: AppContext,
+  allowExpiredCleanup = true
+): Promise<AuthUser | null> {
   const sessionId = getCookie(c, "sessionId");
   if (!sessionId) return null;
 
@@ -13,8 +21,12 @@ async function resolveAuthUser(c: AppContext): Promise<AuthUser | null> {
   const session = await sessionService.getSessionById(sessionId);
   if (!session) return null;
 
-  // 过期 — 仅忽略，不主动清理（避免每次请求触发写操作）
+  // 过期
   if (Date.now() > new Date(session.expires_at.replace(" ", "T") + "Z").getTime()) {
+    if (allowExpiredCleanup) {
+      await sessionService.deleteSessionBySessionId(sessionId);
+      deleteCookie(c, "sessionId", { path: "/" });
+    }
     return null;
   }
 

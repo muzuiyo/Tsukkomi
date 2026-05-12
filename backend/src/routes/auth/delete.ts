@@ -2,9 +2,16 @@ import { Hono } from "hono";
 import { deleteCookie } from "hono/cookie";
 import { requireAuth } from "../../middleware/auth";
 
-import type { AppBindings, AppVariables } from "../../types/hono";
+import type { Env } from "../../types/env";
+import type { AuthUser } from "../../types/user";
 
 import { AuthDeleteService } from "../../services/auth/delete";
+import { SessionService } from "../../services/session";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const deleteApp = new Hono<{
   Bindings: AppBindings;

@@ -13,11 +13,3 @@ export function validateUsername(username: string): boolean {
 export function validatePassword(password: string): boolean {
   return /^[A-Za-z0-9!@#$%^&*]{6,20}$/.test(password);
 }
-
-// 校验 UTC 时间格式：ISO 8601 (YYYY-MM-DDTHH:mm:ssZ 或带毫秒)
-export function isValidUTC(dateStr: string): boolean {
-  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
-  if (!regex.test(dateStr)) return false;
-  const date = new Date(dateStr);
-  return !isNaN(date.getTime());
-}

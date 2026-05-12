@@ -1,8 +1,14 @@
 import { Hono } from "hono";
 import { getCookie, deleteCookie } from "hono/cookie";
 
-import type { AppBindings, AppVariables } from "../../types/hono";
+import type { Env } from "../../types/env";
+import type { AuthUser } from "../../types/user";
 import { AuthLogoutService } from "../../services/auth/logout";
+
+type AppBindings = Env;
+type AppVariables = {
+  user: AuthUser;
+};
 
 const logoutApp = new Hono<{
   Bindings: AppBindings;
