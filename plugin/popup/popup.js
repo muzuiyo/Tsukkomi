@@ -67,6 +67,38 @@ function showView(view) {
 }
 
 // ==============================
+// Draft
+// ==============================
+
+async function saveDraft() {
+  await browser.storage.local.set({
+    draft: {
+      content: memoContent.value,
+      labels: memoLabels.value,
+      isPublic: document.querySelector('input[name="visibility"]:checked').value,
+    },
+  });
+}
+
+async function loadDraft() {
+  const stored = await browser.storage.local.get("draft");
+  if (stored.draft) {
+    memoContent.value = stored.draft.content || "";
+    memoLabels.value = stored.draft.labels || "";
+    const radio = document.querySelector(`input[name="visibility"][value="${stored.draft.isPublic || "1"}"]`);
+    if (radio) radio.checked = true;
+  }
+}
+
+function clearDraft() {
+  browser.storage.local.remove("draft");
+}
+
+memoContent.addEventListener("input", saveDraft);
+memoLabels.addEventListener("input", saveDraft);
+document.querySelectorAll('input[name="visibility"]').forEach((r) => r.addEventListener("change", saveDraft));
+
+// ==============================
 // Init
 // ==============================
 
@@ -79,6 +111,7 @@ async function init() {
   const user = await checkAuth();
   if (user) {
     showView(mainView);
+    await loadDraft();
     await loadPageInfo();
   } else {
     showView(loginView);
@@ -189,6 +222,7 @@ memoForm.addEventListener("submit", async (e) => {
       memoSuccess.classList.remove("hidden");
       memoContent.value = "";
       memoLabels.value = "";
+      clearDraft();
       setTimeout(() => memoSuccess.classList.add("hidden"), 2000);
     } else {
       memoError.textContent = data.error || "发布失败";
