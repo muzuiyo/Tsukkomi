@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=320">
+<link rel="stylesheet" href="popup.css">
+<style>body { opacity: 0; }</style>
+</head>
+<body>
+
+<div id="login-view" class="view">
+  <div class="header">
+    <span class="logo">💬 Tsukkomi</span>
+  </div>
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="邮箱" required>
+    <input type="password" id="login-password" placeholder="密码" required>
+    <div id="login-error" class="error"></div>
+    <button type="submit" class="btn primary">登录</button>
+  </form>
+  <div class="footer">
+    <a href="#" id="goto-settings">设置 API 地址</a>
+  </div>
+</div>
+
+<div id="settings-view" class="view hidden">
+  <div class="header">
+    <span class="logo">⚙️ 设置</span>
+  </div>
+  <form id="settings-form">
+    <label>API 地址</label>
+    <input type="url" id="api-url" placeholder="https://api.tsukkomi.lain.today">
+    <div class="btn-row">
+      <button type="button" class="btn" id="settings-cancel">取消</button>
+      <button type="submit" class="btn primary">保存</button>
+    </div>
+  </form>
+</div>
+
+<div id="main-view" class="view hidden">
+  <div class="header">
+    <span class="logo">💬 Tsukkomi</span>
+    <button class="icon-btn" id="btn-logout" title="登出">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      </svg>
+    </button>
+  </div>
+
+  <form id="memo-form">
+    <textarea id="memo-content" placeholder="现在在做什么？" rows="4"></textarea>
+
+    <div class="form-row">
+      <input type="text" id="memo-labels" placeholder="标签（空格分隔）">
+    </div>
+
+    <div class="form-row visibility-row">
+      <label class="radio-label">
+        <input type="radio" name="visibility" value="1" checked> 公开
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="visibility" value="0"> 私密
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label class="checkbox-label">
+        <input type="checkbox" id="include-page"> 附带当前页面链接
+      </label>
+    </div>
+
+    <div id="memo-error" class="error"></div>
+    <div id="memo-success" class="success hidden">发布成功 ✓</div>
+
+    <button type="submit" class="btn primary" id="btn-submit">发布！</button>
+  </form>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

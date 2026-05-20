@@ -32,10 +32,16 @@ export const app = new Hono<{
 app.use("*", logger());
 
 // CORS
+const ALLOWED_ORIGINS = ["http://127.0.0.1:3000", "http://localhost:3000", "https://tsukkomi.lain.today"];
+
 app.use(
   "*",
   cors({
-    origin: ["http://127.0.0.1:3000", "http://localhost:3000", "https://tsukkomi.lain.today"],
+    origin: (origin) => {
+      if (ALLOWED_ORIGINS.includes(origin)) return origin;
+      if (origin && (origin.startsWith("moz-extension://") || origin.startsWith("chrome-extension://"))) return origin;
+      return ALLOWED_ORIGINS[0];
+    },
     allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type"],
     credentials: true,
