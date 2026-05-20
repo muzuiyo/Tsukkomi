@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Tsukkomi Quick Note",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Quick note-taking extension for Tsukkomi. Save memos from any webpage with one click.",
   "author": "mao",
   "homepage_url": "https://tsukkomi.lain.today",
