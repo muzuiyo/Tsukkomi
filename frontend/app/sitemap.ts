@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const url = `${apiUrl}/memos/?pageSize=100&visibility=public`;
+    const url = `${apiUrl}/memos?pageSize=100&visibility=public`;
     console.log("[sitemap] Fetching:", url);
     const res = await fetch(url);
     console.log("[sitemap] Response status:", res.status);
