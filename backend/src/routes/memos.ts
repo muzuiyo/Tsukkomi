@@ -86,8 +86,8 @@ memosApp.get("/", optionalAuth, async (c) => {
   const user = c.get("user") as AuthUser | undefined;
   const page = Math.max(1, Number(c.req.query("page") ?? 1));
   const pageSize = Math.min(
-    20,
-    Math.max(1, Number(c.req.query("pageSize") ?? 20))
+    100,
+    Math.max(1, Number(c.req.query("pageSize") ?? 100))
   );
 
   const keyword = c.req.query("keyword") || undefined;
