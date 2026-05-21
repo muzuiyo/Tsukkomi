@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     title: "Tsukkomi 备忘录",
     description: "简洁的卡片式笔记系统，支持 Markdown、标签分类、公开/私有可见性控制。",
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   robots: {
     index: true,
     follow: true,
