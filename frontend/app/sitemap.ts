@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://tsukkomi.lain.today";
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.tsukkomi.lain.today";
@@ -14,9 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const res = await fetch(`${apiUrl}/memos/?pageSize=100&visibility=public`, {
-      next: { revalidate: 86400 },
-    });
+    const res = await fetch(`${apiUrl}/memos/?pageSize=100&visibility=public`);
     const json = await res.json();
 
     if (json.success && Array.isArray(json.data)) {
