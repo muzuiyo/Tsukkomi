@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Tsukkomi Quick Note",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Quick note-taking extension for Tsukkomi. Save memos from any webpage with one click.",
   "author": "mao",
   "homepage_url": "https://tsukkomi.lain.today",
@@ -14,9 +14,21 @@
     "default_popup": "popup/popup.html",
     "default_title": "Tsukkomi Quick Note"
   },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "browser_specific_settings": {
     "gecko": {

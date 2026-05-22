@@ -1,0 +1,164 @@
+#tsukkomi-annotate-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: #1a1a2e;
+  overflow: hidden;
+  animation: tsukkomi-fadein 0.15s ease;
+}
+
+@keyframes tsukkomi-fadein {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+#tsukkomi-annotate-panel .tsukkomi-header {
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-close:hover {
+  color: #333;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-body {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-selected {
+  background: #f1f5f9;
+  border-left: 3px solid #4a7cff;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #555;
+  max-height: 80px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+#tsukkomi-annotate-panel textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+  box-sizing: border-box;
+}
+
+#tsukkomi-annotate-panel textarea:focus {
+  outline: none;
+  border-color: #4a7cff;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-input:focus {
+  outline: none;
+  border-color: #4a7cff;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+#tsukkomi-annotate-panel label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-error {
+  color: #ef4444;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-footer {
+  padding: 0 16px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-btn {
+  padding: 7px 16px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  background: #fff;
+  color: #333;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-btn:hover {
+  background: #f0f0f0;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-btn.primary {
+  background: #4a7cff;
+  color: #fff;
+  border-color: #4a7cff;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-btn.primary:hover {
+  background: #3b69e0;
+}
+
+#tsukkomi-annotate-panel .tsukkomi-btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#tsukkomi-annotate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 2147483646;
+}
