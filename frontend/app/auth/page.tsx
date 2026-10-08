@@ -20,7 +20,7 @@ const AuthPage = () => {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-header">
-          <h1 className="auth-logo">💬 TSUKKOMI</h1>
+          <h1 className="auth-logo">TSUKKOMI</h1>
           <span className="auth-mode">
             Auth
           </span>
